@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Face Identify</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+    // $("p").click(function(){
+    //     var myFile = $('#photo').prop('files');
+    //     // var name = $('#name').val();
+    //     // var empId = $('#empId').val();
+
+    //     var data = new FormData();
+    //     // data.append("name", name);
+    //     // data.append("empId", empId);
+    //     data.append("file", myFile[0]);
+
+    //     postItem(data)
+    // });
+
+    var recognize = function () {
+        var myFile = $('#recognizePhoto').prop('files');
+        getBase64(myFile[0], function(result) {
+            postItem(result)
+        });
+    };
+
+    var galleryList = function () {
+        $.ajax({    
+            type: "get",
+            url: "/api/gallery/list",
+            async: false,
+            processData: false,
+            success: function (result) {
+                alert('Success!')
+                console.log(result)
+            },
+            error: function (jqXHR, textStatus, err) {
+                alert('text status: ' + textStatus + ',- err -' + err)
+            }
+        });
+    }
+
+    //delete Gallery
+    $(document).on("click", "#deleteGallery-data", function(){
+        $.ajax({    
+            type: "delete",
+            url: "/api/gallery",
+            data: {'name': $('#delGalleryName').val()},
+            dataType: 'json',
+            success: function (result) {
+                alert('Success!')
+                console.log(result)
+            },
+            error: function (jqXHR, textStatus, err) {
+                alert('text status: ' + textStatus + ',- err -' + err)
+            }
+        });
+    });
+
+    //delete Employee
+    $(document).on("click", "#deleteEmployee-data", function(){
+        $.ajax({    
+            type: "delete",
+            url: "/api/employee",
+            data: {'empId': $('#delEmployeeId').val()},
+            dataType: 'json',
+            success: function (result) {
+                alert('Success!')
+                console.log(result)
+            },
+            error: function (jqXHR, textStatus, err) {
+                alert('text status: ' + textStatus + ',- err -' + err)
+            }
+        });
+    });
+
+    //get Employee
+    $(document).on("click", "#infoEmployee-data", function(){
+        $.ajax({    
+            type: "get",
+            url: "/api/employee/"+$('#infoEmployeeId').val(),
+            dataType: 'json',
+            success: function (result) {
+                alert('Success!')
+                console.log(result)
+            },
+            error: function (jqXHR, textStatus, err) {
+                alert('text status: ' + textStatus + ',- err -' + err)
+            }
+        });
+    });
+
+    var allEmployee = function () {
+        $.ajax({    
+            type: "get",
+            url: "/api/employee/list",
+            async: false,
+            processData: false,
+            success: function (result) {
+                alert('Success!')
+                console.log(result)
+            },
+            error: function (jqXHR, textStatus, err) {
+                alert('text status: ' + textStatus + ',- err -' + err)
+            }
+        });
+    }
+
+    function getBase64(file, callback) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            callback(reader.result.split(',')[1]);
+        };
+        reader.onerror = function (error) {
+            callback(reader.error);
+        };
+    }
+
+    function postItem(img) {
+        $.ajax({    
+            type: "POST",
+            url: "/api/recognize",
+            async: false,
+            processData: false,
+            data: "image=" + encodeURIComponent(img),
+            success: function (result) {
+                alert('Success!')
+                console.log(result)
+            },
+            error: function (jqXHR, textStatus, err) {
+                alert('text status: ' + textStatus + ',- err -' + err)
+            }
+        });
+    }
+
+    function base64toBlob(base64Data, contentType) {
+    contentType = contentType || '';
+    var sliceSize = 1024;
+    var byteCharacters = atob(base64Data);
+    var bytesLength = byteCharacters.length;
+    var slicesCount = Math.ceil(bytesLength / sliceSize);
+    var byteArrays = new Array(slicesCount);
+
+    for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+        var begin = sliceIndex * sliceSize;
+        var end = Math.min(begin + sliceSize, bytesLength);
+
+        var bytes = new Array(end - begin);
+        for (var offset = begin, i = 0 ; offset < end; ++i, ++offset) {
+            bytes[i] = byteCharacters[offset].charCodeAt(0);
+        }
+        byteArrays[sliceIndex] = new Uint8Array(bytes);
+    }
+    return new Blob(byteArrays, { type: contentType });
+}
+</script>
+
+</head>
+
+<body>
+    <div class="container">
+        <center><h1>Face Recognition</h1></center>
+        <br>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#enrollEmp">Enroll Employee</a></li>
+            <li><a data-toggle="tab" href="#recognizeEmp">Recognize Employee</a></li>
+            <li><a data-toggle="tab" href="#galleryList">Gallery List</a></li>
+            <li><a data-toggle="tab" href="#listOfEmp">List Of Employee</a></li>
+            <li><a data-toggle="tab" href="#deleteGallery">Delete Gallery</a></li>
+            <li><a data-toggle="tab" href="#deleteEmp">Delete Employee</a></li>
+            <li><a data-toggle="tab" href="#empInfo">Employee Info</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="enrollEmp" class="tab-pane fade in active">
+                <h2>Employee Form</h2>
+                <!--<form id="upload-info" onsubmit="upload();">-->
+                <form action="/api/employee" method='post' enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="empId">Employee Id:</label>
+                        <input type="text" class="form-control" id="empId" placeholder="Enter employee Id" name="empId">
+                    </div>
+                    <fieldset>
+                        <legend>Upload photo</legend>
+                        <input type="file" name="photo" id="photo" multiple>
+                    </fieldset>
+                    <!--<button type="button" class="btn btn-default upload-data" onclick="upload();">Submit</button>-->
+                    <button type="submit" class="btn btn-default upload-data">Submit</button>
+                </form>
+            </div>
+            <div id="recognizeEmp" class="tab-pane fade">
+                <h2>Recognize Employee</h2>
+                <!--<form id="upload-info" onsubmit="upload();">-->
+                <form>
+                    <fieldset>
+                        <legend>Upload photo</legend>
+                        <input type="file" name="photo" id="recognizePhoto">
+                    </fieldset>
+                    <button type="button" class="btn btn-default" id="recognize-data" onclick="recognize();">Submit</button>
+                </form>
+            </div>
+            <div id="galleryList" class="tab-pane fade">
+                <h2>All Gallery List</h2>
+                <form>
+                    <button type="button" class="btn btn-default" id="galleryList-data" onclick="galleryList();">Submit</button>
+                </form>
+            </div>
+            <div id="listOfEmp" class="tab-pane fade">
+                <h2>All Employees List</h2>
+                <form>
+                    <button type="button" class="btn btn-default" id="allEmp-data" onclick="allEmployee();">Submit</button>
+                </form>
+            </div>
+            <div id="deleteGallery" class="tab-pane fade">
+                <h2>Delete Gallery With All Employee Subjects</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="name">Gallery Name:</label>
+                        <input type="text" class="form-control" id="delGalleryName" placeholder="Enter gallery name" name="delGalleryName">
+                    </div>
+                    <button type="button" class="btn btn-default" id="deleteGallery-data">Submit</button>
+                </form>
+            </div>
+            <div id="deleteEmp" class="tab-pane fade">
+                <h2>Delete Employee</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="name">Employee Id:</label>
+                        <input type="text" class="form-control" id="delEmployeeId" placeholder="Enter employee Id" name="delEmployeeId">
+                    </div>
+                    <button type="button" class="btn btn-default" id="deleteEmployee-data">Submit</button>
+                </form>
+            </div>
+            <div id="empInfo" class="tab-pane fade">
+                <h2>Employee Info</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="name">Employee Id:</label>
+                        <input type="text" class="form-control" id="infoEmployeeId" placeholder="Enter employee Id" name="infoEmployeeId">
+                    </div>
+                    <button type="button" class="btn btn-default" id="infoEmployee-data">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
