@@ -1,5 +1,8 @@
+var consts = require('../const/const');
+
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/IOTFace');
+// mongoose.connect(consts.local_db_url);
+mongoose.connect(consts.cloud_db_url);
 var conn = mongoose.connection;
 
 conn.on('error', console.error.bind(console, 'connection error:'));

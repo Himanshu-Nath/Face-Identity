@@ -86,17 +86,35 @@ module.exports = {
     },
     //delete Employee
     deleteEmployee: function (req, res) {
-        Employee.findOneAndRemove({ empId: req.body.empId }, function (err, result) {
+        Employee.findOneAndRemove({ empId: req.body.empId }, function (err, result) {            
             if (err) {
                 res.status(404).send({ status: false, message: consts.fail, err });
             } else {
-                employeeBL.deleteEmployeeInKairos(res, result.subjectId);
+                if(result != null)
+                    if(result.subjectId != null)
+                        employeeBL.deleteEmployeeInKairos(res, result.subjectId);
+                    else
+                        res.status(200).send({ status: false, message: consts.fail, developerMessage: consts.record_not_found });    
+                else
+                    res.status(200).send({ status: false, message: consts.fail, developerMessage: consts.record_not_found });
             }
         })
     },
     //get Employee
     getEmployee: function (req, res) {
         Employee.findOne({ empId: req.params.empId }, function (err, result) {
+            if (err) {
+                res.status(404).send({ status: false, message: consts.fail, err });
+            } else {
+                res.send({ status: true, message: consts.success, result });
+            }
+        })
+    },
+    //get Employee list from DB
+    getEmployeeListFromDB: function (req, res) {
+        Employee.find({}, function (err, result) {
+            console.log(result)
+            console.log(err)
             if (err) {
                 res.status(404).send({ status: false, message: consts.fail, err });
             } else {

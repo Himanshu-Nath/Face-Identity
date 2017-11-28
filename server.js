@@ -1,6 +1,6 @@
 mongoose = require('mongoose');
-var db = require( './config/db');
 var consts = require( './const/const');
+var db = require( './config/db');
 request = require('request');
 kairos = require('kairos-api');
 const express = require('express')
@@ -19,6 +19,7 @@ app.get('/api/employee/list', employee.employeeList);
 app.delete('/api/gallery', employee.deleteGallery);
 app.delete('/api/employee', employee.deleteEmployee);
 app.get('/api/employee/:empId', employee.getEmployee);
+app.get('/api/allemployee', employee.getEmployeeListFromDB);
 
 app.use('/', express.static(__dirname + '/'));
 app.use('/app', express.static(__dirname + '/app'));

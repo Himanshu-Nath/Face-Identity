@@ -9,6 +9,7 @@ exports.fail = "FAILED";
 exports.added = "ADDED";
 exports.deleted = "DELETED";
 exports.file_upload = "File is uploaded Successfully";
+exports.record_not_found = "Record not found";
 
 exports.headerDetails = {
     'Content-Type': 'application/json',
@@ -26,3 +27,6 @@ exports.URL = "https://api.kairos.com/";
 exports.high = "HIGH";
 exports.medium = "MEDIUM";
 exports.low = "LOW";
+
+exports.local_db_url = "mongodb://localhost/IOTFace";
+exports.cloud_db_url = "mongodb://faceidentity:faceidentity@cluster0-shard-00-00-7i7ht.mongodb.net:27017,cluster0-shard-00-01-7i7ht.mongodb.net:27017,cluster0-shard-00-02-7i7ht.mongodb.net:27017/IOTFace?replicaSet=Cluster0-shard-0&ssl=true&authSource=admin"
