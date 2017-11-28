@@ -22,6 +22,7 @@ var upload = multer({ storage: storage }).array('photo', 5);
 //var upload = multer({ storage: storage }).single('photo');  //for single file upload
 
 module.exports = {
+	
     //add Employee
     addEmployee: function (req, res) {
         upload(req, res, function (err) {
@@ -62,10 +63,12 @@ module.exports = {
             }
         });
     },
+	
     //recognize Employee
     recognizeEmployee: function (req, res) {
         employeeBL.recognizeInKairos(req.body.image, res)
     },
+	
     //gallery List
     galleryList: function (req, res) {
         employeeBL.galleryInKairos(function (result) {
@@ -76,14 +79,17 @@ module.exports = {
             }
         })
     },
+	
     //employee List
     employeeList: function (req, res) {
         employeeBL.employeeInKairos(res);
     },
+	
     //delete Gallery
     deleteGallery: function (req, res) {
         employeeBL.deleteGalleryInKairos(res, req.body.name);
     },
+	
     //delete Employee
     deleteEmployee: function (req, res) {
         Employee.findOneAndRemove({ empId: req.body.empId }, function (err, result) {            
@@ -100,6 +106,7 @@ module.exports = {
             }
         })
     },
+	
     //get Employee
     getEmployee: function (req, res) {
         Employee.findOne({ empId: req.params.empId }, function (err, result) {
@@ -110,6 +117,7 @@ module.exports = {
             }
         })
     },
+	
     //get Employee list from DB
     getEmployeeListFromDB: function (req, res) {
         Employee.find({}, function (err, result) {
